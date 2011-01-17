@@ -11,14 +11,14 @@ telling us when the pizza is baked so we can eat to live another day.
 
 ## Requirements
 
-nodejs
-npm
-irc-js
-mongodb
-mongoose
+    nodejs
+    npm
+    irc-js
+    mongodb
+    mongoose
 
 ## Features
 
-pizza (timer)
-8-ball
-choose
+    pizza (timer)
+    8-ball
+    choose
