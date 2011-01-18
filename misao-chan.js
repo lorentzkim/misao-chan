@@ -9,17 +9,20 @@ var sys = require('sys'),
 
 var irc_instance = new irc(config.irc);
 
+irc_instance.addListener('privmsg', privmsgListener);
 irc_instance.connect(onConnect);
 
 // Listeners
 
 function onConnect() {
 	setTimeout(function() {
-		console.log('what');
 		irc_instance.join('#misao-chan');
 	}, 15000);
 }
 
-function pingListener() {
-	console.log('ping!');
+function privmsgListener(message) {
+	if(message.params[1] == 'help') {
+		msg = 'Please visit "https://github.com/lorentzkim/misao-chan" for usage';
+		irc_instance.privmsg(message.person.nick, msg, true);
+	}
 }
