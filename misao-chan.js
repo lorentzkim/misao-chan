@@ -21,7 +21,7 @@ function onConnect() {
 }
 
 function privmsgListener(message) {
-	if(message.params[1] == 'help') {
+	if(message.params[0] == config.irc.nick && message.params[1] == 'help') {
 		msg = 'Please visit "https://github.com/lorentzkim/misao-chan" for usage';
 		irc_instance.privmsg(message.person.nick, msg, true);
 	}
