@@ -29,6 +29,7 @@ function privmsgListener(message) {
 		to = message.person.nick;
 		splitMessage = message.params[1].split(' ');
 		method = 'misao.'+splitMessage[0].toLowerCase().replace(/[^a-z]/g, '');
+		splitMessage.shift();
 	} else {
 		// General channel message, so we operate a little differently
 		// And yes, I'm aware how the variable names are a clusterfuck
@@ -71,8 +72,7 @@ function Misao() {
 	
 	this.fortune = function(to, username, message) {
 		
-		msgs = [];
-		
+		msgs = [];		
 		for(i in config.fortune) {
 			eval(i+' = config.fortune.'+i+'[Math.floor(Math.random()*config.fortune.'+i+'.length)];');
 			msgs.push((i.slice(0,1).toUpperCase() + i.slice(1)) + ': ' + (eval(i)));
@@ -81,8 +81,27 @@ function Misao() {
 		this.privmsg(to, username, msgs.join(' | '));
 	}
 	
+	this.tell = function(to, username, message) {
+		
+		
+	}
+	
+	this.choose = function(to, username, message) {
+		message = message.join(' ');
+		choices = message.split(' or ');
+		
+		if(choices.length == 1) {
+			msg = 'Make a proper choice, mau mau~';
+			
+		} else {
+			msg = 'I choose... "'+choices[Math.floor(Math.random()*choices.length)]+'"';
+		}
+		
+		this.privmsg(to, username, msg);
+	}
+	
 	this.methodNotFound = function(to, username, message) {
-		msg = 'Invalid command';
+		msg = 'Invalid command, mau mau~';
 		this.privmsg(to, username, msg);
 	}
 	
