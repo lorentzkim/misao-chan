@@ -5,7 +5,11 @@ var sys = require('sys'),
 	path = require('path'),
 	fs = require('fs'),
 	config = require('./config.js'),
-	irc = require('irc-js');
+	irc = require('irc-js'),
+	mongoose = require('mongoose/').Mongoose,
+	db = mongoose.connect('mongodb://localhost/misao');
+
+console.log(db);
 
 var irc_instance = new irc(config.irc);
 
@@ -55,7 +59,7 @@ function privmsgListener(message) {
 	command = method+"('"+to+"', '"+message.person.nick+"', splitMessage)";
 	
 	// But calling the method is the same anyway regardless
-	if(method != null && typeof eval(method) == 'function') { 
+	if(method != null && method != 'misao.' && typeof eval(method) == 'function') { 
 		eval(command);
 	} else if (method != null) {
 		misao.methodNotFound(to);
