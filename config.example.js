@@ -7,7 +7,7 @@ exports.irc = {
 		username: 'Misao-chan',
 		realname: 'Misao-chan (BOT)',
 	},
-	channel: '#misao-chan'
+	channels: ['#misao-chan']
 };
 
 exports.fortune = {
