@@ -18,7 +18,7 @@ irc_instance.connect(onConnect);
 
 function onConnect() {
 	setTimeout(function() {
-		irc_instance.join('#misao-chan');
+		irc_instance.join(config.irc.channel);
 	}, 15000);
 }
 
