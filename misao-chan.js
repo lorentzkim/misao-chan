@@ -26,6 +26,10 @@ jerk(function(j) {
 	j.watch_for(listenRegex('help'), function(message) {
 		message.say(misao.help(message));
 	});
+	
+	j.watch_for(listenRegex('~'), function(message) {
+		message.say(misao.maumau(message));
+	});
 }).connect(options);
 
 // Create regex obj for listening
@@ -47,7 +51,7 @@ function Misao() {
 	}
 	
 	this.fortune = function(message) {
-		msgs = [];		
+		msgs = [];
 		for(i in config.fortune) {
 			eval(i+' = config.fortune.'+i+'[Math.floor(Math.random()*config.fortune.'+i+'.length)];');
 			msgs.push((i.slice(0,1).toUpperCase() + i.slice(1)) + ': ' + (eval(i)));
@@ -73,6 +77,10 @@ function Misao() {
 		}
 		
 		return this._padName(message, msg);
+	}
+	
+	this.maumau = function(message) {
+		return this._padName(message, 'mau mau~');
 	}
 	
 	this.methodNotFound = function(message) {
