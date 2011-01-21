@@ -5,7 +5,7 @@ var sys = require('sys'),
 	path = require('path'),
 	fs = require('fs'),
 	config = require('./config.js'),
-	jerk = require('jerk'),
+	dork = require('dork'),
 	mongoose = require('mongoose/').Mongoose,
 	db = mongoose.connect('mongodb://localhost/misao');
 
@@ -14,20 +14,24 @@ var options = config.irc;
 
 // Listeners
 
-jerk(function(j) {
-	j.watch_for(listenRegex('fortune'), function(message) {
+dork(function(j) {
+	j.watch_for('join', /.*/, function(message) {
+		message.say(misao.welcome(message));
+	});
+	
+	j.watch_for('privmsg', listenRegex('fortune'), function(message) {
 		message.say(misao.fortune(message));
 	});
 	
-	j.watch_for(listenRegex('choose'), function(message) {
+	j.watch_for('privmsg', listenRegex('choose'), function(message) {
 		message.say(misao.choose(message));
 	});
 	
-	j.watch_for(listenRegex('help'), function(message) {
+	j.watch_for('privmsg', listenRegex('help'), function(message) {
 		message.say(misao.help(message));
 	});
 	
-	j.watch_for(listenRegex('~'), function(message) {
+	j.watch_for('privmsg', listenRegex('~'), function(message) {
 		message.say(misao.maumau(message));
 	});
 }).connect(options);
@@ -50,6 +54,10 @@ function Misao() {
 		return this._padName(message, 'Please visit "https://github.com/lorentzkim/misao-chan" for usage');
 	}
 	
+	this.welcome = function(message) {
+		return this._padName(message, 'welcome~');
+	}
+	
 	this.fortune = function(message) {
 		msgs = [];
 		for(i in config.fortune) {
@@ -61,7 +69,6 @@ function Misao() {
 	}
 	
 	this.tell = function(message) {
-		
 		
 	}
 	
