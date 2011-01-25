@@ -1,0 +1,22 @@
+{
+	"name" : "misao-chan",
+	"description" : "Cutest IRC bot ever",
+	"author" : "Lorentz Kim <lorentz@majestika.net> (http://lorentz.majestika.net)",
+	"homepage" : "http://github.com/lorentzkim/misao-chan",
+	"version" : "0.0.1",
+	"main" : "./misao-chan",
+	"dependencies" : {
+		"dork": ">=1.1.2",
+	},
+	"engines" : [
+		"node >=0.2.0"
+	],
+	"repository" : {
+		"type" : "git",
+		"url" : "http://github.com/lorentzkim/misao-chan.git"
+	},
+	"license" : {
+		"type" : "MIT",
+		"url" : "http://github.com/lorentzkim/misao-chan/raw/master/LICENSE"
+	}
+}
