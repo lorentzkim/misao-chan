@@ -3,6 +3,8 @@
 An IRC bot for a certain channel on freenode. Written in JS for Node.js. Feel
 free to use her for your own channel too!
 
+Her project is managed at [redmine.majestika.net](http://redmine.majestika.net/projects/misao-chan/)
+
 ## Project Goal
 
 To create an IRC bot that makes life easier for everyone. For instance, a bot
