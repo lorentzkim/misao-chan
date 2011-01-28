@@ -29,3 +29,8 @@ modular and easily extendable.
     8-ball (not yet)
     choose (implemented)
     fortune (implemented)
+    
+## Usage
+
+Copy/move config.example.js to config.js, edit its contents to suit your needs,
+and then simply run "node misao-chan.js".
