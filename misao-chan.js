@@ -5,9 +5,7 @@ var sys = require('sys'),
 	path = require('path'),
 	fs = require('fs'),
 	config = require('./config.js'),
-	dork = require('dork'),
-	mongoose = require('mongoose/').Mongoose,
-	db = mongoose.connect('mongodb://localhost/misao');
+	dork = require('dork');
 
 var misao = new Misao();
 var options = config.irc;
@@ -16,7 +14,7 @@ var options = config.irc;
 
 dork(function(j) {
 	j.watch_for('join', /.*/, function(message) {
-		message.say(misao.welcome(message));
+		misao.join(message);
 	});
 	
 	j.watch_for('privmsg', listenRegex('fortune'), function(message) {
@@ -54,8 +52,8 @@ function Misao() {
 		return this._padName(message, 'Please visit "https://github.com/lorentzkim/misao-chan" for usage');
 	}
 	
-	this.welcome = function(message) {
-		return this._padName(message, 'welcome~');
+	this.join = function(message) {
+		// Placeholder method for later when this bot will need a join-event feature
 	}
 	
 	this.fortune = function(message) {
@@ -66,10 +64,6 @@ function Misao() {
 		}
 		
 		return this._padName(message, msgs.join(' | '));
-	}
-	
-	this.tell = function(message) {
-		
 	}
 	
 	this.choose = function(message) {
