@@ -5,32 +5,54 @@ var sys = require('sys'),
 	path = require('path'),
 	fs = require('fs'),
 	config = require('./config.js'),
-	dork = require('dork');
+	dork = require('dork'),
+	mongoose = require('mongoose'),
+	Tell = require('./models/tell.js').model;
 
-var misao = new Misao();
 var options = config.irc;
 
-// Listeners
+mongoose.connect(config.mongodb);
 
+// Listeners
 dork(function(j) {
-	j.watch_for('join', /.*/, function(message) {
-		misao.join(message);
+	j.watch_for('join', /.*/, function(msg) {
+		Misao.join(msg);
 	});
 	
-	j.watch_for('privmsg', listenRegex('fortune'), function(message) {
-		message.say(misao.fortune(message));
+	j.watch_for('privmsg', /.*/, function(msg) {
+		Misao.catchAll(msg, function(reply) {
+			msg.say(reply);
+		});
 	});
 	
-	j.watch_for('privmsg', listenRegex('choose'), function(message) {
-		message.say(misao.choose(message));
+	j.watch_for('privmsg', listenRegex('tell'), function(msg) {
+		Misao.tell(msg, function(reply) {
+			msg.say(reply);
+		});
 	});
-	
-	j.watch_for('privmsg', listenRegex('help'), function(message) {
-		message.say(misao.help(message));
+
+	j.watch_for('privmsg', listenRegex('fortune'), function(msg) {
+		Misao.fortune(msg, function(reply) {
+			msg.say(reply);
+		});
 	});
-	
-	j.watch_for('privmsg', listenRegex('~'), function(message) {
-		message.say(misao.maumau(message));
+
+	j.watch_for('privmsg', listenRegex('choose'), function(msg) {
+		Misao.choose(msg, function(reply) {
+			msg.say(reply);
+		});
+	});
+
+	j.watch_for('privmsg', listenRegex('help'), function(msg) {
+		Misao.help(msg, function(reply) {
+			msg.say(reply);
+		});
+	});
+
+	j.watch_for('privmsg', listenRegex('~'), function(msg) {
+		Misao.maumau(msg, function(reply) {
+			msg.say(reply);
+		});
 	});
 }).connect(options);
 
@@ -39,56 +61,94 @@ function listenRegex(listenString) {
 	return new RegExp("^"+options.nick+": "+listenString+"($|\\s)");
 }
 
-// Strip message text for use in methods
+// Strip msg text for use in methods
 function stripText(text) {
 	regex = new RegExp("^"+options.nick+": \\w+($|\\s)");
 	return text.replace(regex, '');
 }
 
+function padName(msg, result) {
+	return msg.user+': '+result;
+}
+
 // Bot itself
-function Misao() {
+var Misao = {
 	
-	this.help = function(message) {
-		return this._padName(message, 'Please visit "https://github.com/lorentzkim/misao-chan" for usage');
-	}
+	help: function(msg, callback) {
+		callback(padName(msg, 'Please visit "https://github.com/lorentzkim/misao-chan" for usage'));
+	},
 	
-	this.join = function(message) {
-		// Placeholder method for later when this bot will need a join-event feature
-	}
+	join: function(msg, callback) {
+		this.tellProcess(msg, function(call) {
+			callback(call);
+		});
+	},
 	
-	this.fortune = function(message) {
+	catchAll: function(msg, callback) {
+		this.tellProcess(msg, function(call) {
+			callback(call);
+		});
+	},
+	
+	fortune: function(msg, callback) {
 		msgs = [];
 		for(i in config.fortune) {
 			eval(i+' = config.fortune.'+i+'[Math.floor(Math.random()*config.fortune.'+i+'.length)];');
 			msgs.push((i.slice(0,1).toUpperCase() + i.slice(1)) + ': ' + (eval(i)));
 		}
 		
-		return this._padName(message, msgs.join(' | '));
-	}
+		callback(padName(msg, msgs.join(' | ')));
+	},
 	
-	this.choose = function(message) {
-		text = stripText(message.text[0]);
+	tell: function(msg, callback) {		
+		text = stripText(msg.text[0]);
+		index = text.indexOf(' ', 0);
+		success = false;
+		if(index > 0) {
+			to = text.substr(0, text.indexOf(' ', 0));
+			toMessage = text.substr(text.indexOf(' ', 0) + 1);
+			
+			var instance = new Tell();
+			instance.from = msg.user;
+			instance.to = to;
+			instance.message = toMessage;
+			
+			instance.save(function(err) {
+				if (err) callback(this.maumau(msg));
+				else callback(padName(msg, 'OK, I\'ll tell~'));
+				return;
+			});
+		}
+	},
+	
+	tellProcess: function (msg, callback) {
+		Tell.find({to: msg.user}, function(err, docs) {
+			while(result = docs.pop()) {
+				callback(result.doc.to+': '+result.doc.from+' told me to tell you "'+result.doc.message+'"~');
+				result.remove();
+			}
+		});
+	},
+	
+	choose: function(msg, callback) {
+		text = stripText(msg.text[0]);
 		choices = text.split(' or ');
 		
 		if(choices.length == 1) {
-			msg = 'Make a proper choice, mau mau~';
+			reply = 'Make a proper choice, mau mau~';
 			
 		} else {
-			msg = 'I choose... "'+choices[Math.floor(Math.random()*choices.length)]+'"';
+			reply = 'I choose... "'+choices[Math.floor(Math.random()*choices.length)]+'"';
 		}
 		
-		return this._padName(message, msg);
-	}
+		callback(padName(msg, reply));
+	},
 	
-	this.maumau = function(message) {
-		return this._padName(message, 'mau mau~');
-	}
+	maumau: function(msg) {
+		return padName(msg, 'mau mau~');
+	},
 	
-	this.methodNotFound = function(message) {
+	methodNotFound: function(msg) {
 		return 'Invalid command, mau mau~';
-	}
-	
-	this._padName = function(message, result) {
-		return message.user+': '+result;
 	}
 }

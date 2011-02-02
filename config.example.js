@@ -10,6 +10,8 @@ exports.irc = {
 	channels: ['#misao-chan']
 };
 
+exports.mongodb = 'mongodb://localhost/misao';
+
 exports.fortune = {
 	luck: [
 		"Daikyou (Catastrophe)",

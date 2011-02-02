@@ -29,6 +29,7 @@ modular and easily extendable.
     8-ball (not yet)
     choose (implemented)
     fortune (implemented)
+    tell (implemented)
     
 ## Usage
 
