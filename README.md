@@ -3,17 +3,17 @@
 An IRC bot for a certain channel on freenode. Written in JS for Node.js. Feel
 free to use her for your own channel too!
 
+She is a relatively advanced IRC bot, capable of hotloading modules (even through
+code upgrades), and thus very expandable.
+
 For submitting issues and other things, please visit
-[redmine.majestika.net](http://redmine.majestika.net/projects/misao-chan/)
+[redmine.majestika.net](http://redmine.majestika.net/projects/misao-chan/).
 
 ## Project Goal
 
 To create an IRC bot that makes life easier for everyone. For instance, a bot
 to make important life decisions for us by randomly picking at things, or
 telling us when the pizza is baked so we can eat to live another day.
-
-She does not have any superiorly advanced features, but she is built to be
-modular and easily extendable.
 
 ## Core Requirements
 
@@ -22,7 +22,7 @@ modular and easily extendable.
     
 ## Module Requirements
 
-Tell
+### Tell
     mongodb
     mongoose
     
@@ -33,11 +33,11 @@ and then simply run "node misao-chan.js".
 
 ## Modules
 
+### -Usage-
+
 Misao-chan implements a hotloading modules system. If you're the administrator
 (set via the config file, which is yet to be hotloadable), simply "load modulename"
 or "unload modulename" to load and unload modules, respectably.
-
-## Features
 
 ### Pizza
 
