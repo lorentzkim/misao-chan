@@ -14,5 +14,5 @@ exports.execute = function(msg, callback) {
 		reply = 'I choose... "'+choices[Math.floor(Math.random()*choices.length)]+'"';
 	}
 	
-	callback(misaoUtil.padName(msg, reply));
+	callback(reply);
 };

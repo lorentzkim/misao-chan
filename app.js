@@ -16,6 +16,7 @@ var illegalCommands = ['load', 'unload', 'list', 'exec'];
 
 // Listeners
 var dorkBot = dork(function(j) {
+
 	j.watch_for('privmsg', 'load', function(msg) {
 		if(misaoUtil.check('load', msg)) {
 			Misao.load(msg, function(reply) {
@@ -62,21 +63,28 @@ var Misao = {
 	_loadedModules: [],
 
 	load: function(msg, callback) {
+		// Actual module name here is the argument, not 'load' module
 		moduleName = misaoUtil.stripText(msg).replace(/[^a-z]/, '');
-		modulePath = config.filesystem.modulesPath+'/'+moduleName+'.js';
 		
+		Misao._loadModule(moduleName, function(reply) {
+			callback(misaoUtil.padName(msg, reply));
+		});
+	},
+	
+	_loadModule: function(moduleName, callback) {
+		modulePath = config.filesystem.modulesPath+'/'+moduleName+'.js';
 		path.exists(modulePath, function(exists) {
 			if(!exists) {
-				callback(misaoUtil.padName(msg, 'Module not found'));
+				callback('Module not found');
 			}
 			else {
 				if(Misao._loadedModules[moduleName] != undefined) {
-					callback(misaoUtil.padName(msg, 'Module '+moduleName+' is already loaded~'));
+					callback('Module '+moduleName+' is already loaded~');
 				}
 				else {
 					var module = require(moduleName);
 					Misao._loadedModules[moduleName] = module;
-					callback(misaoUtil.padName(msg, 'Module '+moduleName+' has been loaded~'));
+					callback('Module '+moduleName+' has been loaded~');
 				}
 			}
 		});
@@ -158,3 +166,10 @@ var Misao = {
 		callback('module is broken D: I\'m sorrryyyyy');
 	}
 }
+
+// Load default modules
+for(i = 0; i < config.startup.modules.length; i++) {
+	Misao._loadModule(config.startup.modules[i], function(reply) {
+	
+	});
+};

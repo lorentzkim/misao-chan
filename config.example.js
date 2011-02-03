@@ -15,3 +15,9 @@ exports.mongodb = 'mongodb://localhost/misao';
 exports.filesystem = {
 	modulesPath: '/home/misao/modules'
 };
+
+exports.startup = {
+	modules: ['choose', 'tell', 'fortune', 'help']
+};
+
+exports.admins = ['lorentz'];

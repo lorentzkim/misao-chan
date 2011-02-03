@@ -1,9 +1,21 @@
-var options = require('./config.js').irc;
+var config = require('./config.js');
+
+options = config.irc;
 
 // Makes sure trigger is correct
 exports.check = function(command, msg) {
-	if(this.isForMisao(msg) && this.getCommand(msg) == command) {
+	if(this.isForMisao(msg) && this.getCommand(msg) == command && this.isAdmin(msg.user)) {
 		return true;
+	}
+	return false;
+}
+
+// Checks whether user is an admin, that is, can configure the bot
+exports.isAdmin = function(username) {
+	for(i = 0; i < config.admins.length; i++) {
+		if(config.admins[i] == username) {
+			return true;
+		}
 	}
 	return false;
 }
