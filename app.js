@@ -4,151 +4,157 @@
 var sys = require('sys'),
 	path = require('path'),
 	fs = require('fs'),
+	util = require('util'),
+	misaoUtil = require('./util.js'),
 	config = require('./config.js'),
-	dork = require('dork'),
-	mongoose = require('mongoose'),
-	Tell = require('./models/tell.js').model;
+	dork = require('dork');
+
+require.paths.unshift(config.filesystem.modulesPath);
 
 var options = config.irc;
-
-mongoose.connect(config.mongodb);
+var illegalCommands = ['load', 'unload', 'list', 'exec'];
 
 // Listeners
-dork(function(j) {
-	j.watch_for('join', /.*/, function(msg) {
-		Misao.join(msg);
+var dorkBot = dork(function(j) {
+	j.watch_for('privmsg', 'load', function(msg) {
+		if(misaoUtil.check('load', msg)) {
+			Misao.load(msg, function(reply) {
+				msg.say(reply);
+			});
+		}
+	});
+	
+	j.watch_for('privmsg', 'unload', function(msg) {
+		if(misaoUtil.check('unload', msg)) {
+			Misao.unload(msg, function(reply) {
+				msg.say(reply);
+			});
+		}
+	});
+	
+	j.watch_for('privmsg', 'list', function(msg) {
+		if(misaoUtil.check('list', msg)) {
+			Misao.list(msg, function(reply) {
+				msg.say(reply);
+			});
+		}
 	});
 	
 	j.watch_for('privmsg', /.*/, function(msg) {
-		Misao.catchAll(msg, function(reply) {
-			msg.say(reply);
-		});
+		if(misaoUtil.isForMisao(msg)) {
+			Misao.execute(msg, function(reply) {
+				if(reply != undefined) {
+					msg.say(reply);
+				}
+			});
+		}
+		Misao.listen(msg);
 	});
 	
-	j.watch_for('privmsg', listenRegex('tell'), function(msg) {
-		Misao.tell(msg, function(reply) {
-			msg.say(reply);
-		});
-	});
-
-	j.watch_for('privmsg', listenRegex('fortune'), function(msg) {
-		Misao.fortune(msg, function(reply) {
-			msg.say(reply);
-		});
-	});
-
-	j.watch_for('privmsg', listenRegex('choose'), function(msg) {
-		Misao.choose(msg, function(reply) {
-			msg.say(reply);
-		});
-	});
-
-	j.watch_for('privmsg', listenRegex('help'), function(msg) {
-		Misao.help(msg, function(reply) {
-			msg.say(reply);
-		});
-	});
-
-	j.watch_for('privmsg', listenRegex('~'), function(msg) {
-		Misao.maumau(msg, function(reply) {
-			msg.say(reply);
-		});
+	j.watch_for('join', /.*/, function(msg) {
+		Misao.listen(msg);
 	});
 }).connect(options);
 
-// Create regex obj for listening
-function listenRegex(listenString) {
-	return new RegExp("^"+options.nick+": "+listenString+"($|\\s)");
-}
-
-// Strip msg text for use in methods
-function stripText(text) {
-	regex = new RegExp("^"+options.nick+": \\w+($|\\s)");
-	return text.replace(regex, '');
-}
-
-function padName(msg, result) {
-	return msg.user+': '+result;
-}
-
 // Bot itself
 var Misao = {
-	
-	help: function(msg, callback) {
-		callback(padName(msg, 'Please visit "https://github.com/lorentzkim/misao-chan" for usage'));
-	},
-	
-	join: function(msg, callback) {
-		this.tellProcess(msg, function(call) {
-			callback(call);
-		});
-	},
-	
-	catchAll: function(msg, callback) {
-		this.tellProcess(msg, function(call) {
-			callback(call);
-		});
-	},
-	
-	fortune: function(msg, callback) {
-		msgs = [];
-		for(i in config.fortune) {
-			eval(i+' = config.fortune.'+i+'[Math.floor(Math.random()*config.fortune.'+i+'.length)];');
-			msgs.push((i.slice(0,1).toUpperCase() + i.slice(1)) + ': ' + (eval(i)));
-		}
+
+	_loadedModules: [],
+
+	load: function(msg, callback) {
+		moduleName = misaoUtil.stripText(msg).replace(/[^a-z]/, '');
+		modulePath = config.filesystem.modulesPath+'/'+moduleName+'.js';
 		
-		callback(padName(msg, msgs.join(' | ')));
-	},
-	
-	tell: function(msg, callback) {		
-		text = stripText(msg.text[0]);
-		index = text.indexOf(' ', 0);
-		success = false;
-		if(index > 0) {
-			to = text.substr(0, text.indexOf(' ', 0));
-			toMessage = text.substr(text.indexOf(' ', 0) + 1);
-			
-			var instance = new Tell();
-			instance.from = msg.user;
-			instance.to = to;
-			instance.message = toMessage;
-			
-			instance.save(function(err) {
-				if (err) callback(this.maumau(msg));
-				else callback(padName(msg, 'OK, I\'ll tell~'));
-				return;
-			});
-		}
-	},
-	
-	tellProcess: function (msg, callback) {
-		Tell.find({to: msg.user}, function(err, docs) {
-			while(result = docs.pop()) {
-				callback(result.doc.to+': '+result.doc.from+' told me to tell you "'+result.doc.message+'"~');
-				result.remove();
+		path.exists(modulePath, function(exists) {
+			if(!exists) {
+				callback(misaoUtil.padName(msg, 'Module not found'));
+			}
+			else {
+				if(Misao._loadedModules[moduleName] != undefined) {
+					callback(misaoUtil.padName(msg, 'Module '+moduleName+' is already loaded~'));
+				}
+				else {
+					var module = require(moduleName);
+					Misao._loadedModules[moduleName] = module;
+					callback(misaoUtil.padName(msg, 'Module '+moduleName+' has been loaded~'));
+				}
 			}
 		});
 	},
 	
-	choose: function(msg, callback) {
-		text = stripText(msg.text[0]);
-		choices = text.split(' or ');
-		
-		if(choices.length == 1) {
-			reply = 'Make a proper choice, mau mau~';
-			
-		} else {
-			reply = 'I choose... "'+choices[Math.floor(Math.random()*choices.length)]+'"';
+	unload: function(msg, callback) {
+		moduleName = misaoUtil.stripText(msg).replace(/[^a-z]/, '');
+		if(Misao._loadedModules[moduleName] != undefined) {
+			delete Misao._loadedModules[moduleName];
+			delete require.cache[modulePath];
+			callback(misaoUtil.padName(msg, 'Module '+moduleName+' has been unloaded~'));
+		}
+		else {
+			callback(misaoUtil.padName(msg, 'Module '+moduleName+' wasn\'t loaded~'));
+		}
+	},
+	
+	list: function(msg, callback) {
+		callback(misaoUtil.padName(msg, 'Current list of modules: '+Misao._loadedModules.join(', ')));
+	},
+	
+	execute: function(msg, callback) {
+		moduleName = misaoUtil.getCommand(msg);
+		for(i = 0; i < illegalCommands.length; i++) {
+			if(illegalCommands[i] == moduleName) return;
 		}
 		
-		callback(padName(msg, reply));
+		if(Misao._loadedModules[moduleName] != undefined) {
+			try {
+				Misao._loadedModules[moduleName].execute(msg, function(reply) {
+					if(!misaoUtil.isPM(msg)) {
+						reply = misaoUtil.padName(msg, reply);
+					}
+					callback(reply);
+				});
+			}
+			catch(err) {
+				Misao.error(err, msg, function(reply) {
+					callback(reply);
+				});
+			}
+		}
+		else {
+			Misao.moduleNotFound(msg, function(reply) {
+				callback(reply);
+			});
+		}
 	},
 	
-	maumau: function(msg) {
-		return padName(msg, 'mau mau~');
+	// Listen differs from execute that there's no callback, and doesn't rely
+	// on module names.
+	listen: function(msg) {
+		for(m in Misao._loadedModules) {
+			try {
+				module = Misao._loadedModules[m];
+				if(module.listen != undefined) {
+					Misao._loadedModules[m].listen(msg, function(to, reply) {
+						dorkBot.say(to, reply);
+					});
+				}
+			}
+			catch(err) {
+				Misao.error(err, msg, function(reply) {
+					msg.say(reply);
+				});
+			}
+		}
 	},
 	
-	methodNotFound: function(msg) {
-		return 'Invalid command, mau mau~';
+	moduleNotFound: function(msg, callback) {
+		callback(misaoUtil.padName(msg, 'invalid command, mau mau~'));
+	},
+	
+	error: function(err, msg, callback) {
+		// Purposely logged
+		console.log('ERROR:');
+		console.log(util.inspect(err, 5));
+		console.log(util.inspect(msg, 5));
+		callback('module is broken D: I\'m sorrryyyyy');
 	}
 }
