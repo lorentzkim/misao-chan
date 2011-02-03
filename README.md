@@ -29,7 +29,9 @@ telling us when the pizza is baked so we can eat to live another day.
 ## Installation
 
 Copy/move config.example.js to config.js, edit its contents to suit your needs,
-and then simply run "node misao-chan.js".
+and then simply run
+
+    node app.js
 
 ## Modules
 
