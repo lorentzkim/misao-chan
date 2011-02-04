@@ -12,10 +12,26 @@ var sys = require('sys'),
 require.paths.unshift(config.filesystem.modulesPath);
 
 var options = config.irc;
-var illegalCommands = ['load', 'unload', 'list', 'exec'];
+var illegalCommands = ['load', 'unload', 'list', 'exec', 'join', 'part'];
 
 // Listeners
 var dorkBot = dork(function(j) {
+
+	j.watch_for('privmsg', 'join', function(msg) {
+		if(misaoUtil.check('join', msg)) {
+			Misao.join(msg, function(reply) {
+				msg.say(reply);
+			});
+		}
+	});
+	
+	j.watch_for('privmsg', 'part', function(msg) {
+		if(misaoUtil.check('part', msg)) {
+			Misao.part(msg, function(reply) {
+				msg.say(reply);
+			});
+		}
+	});
 
 	j.watch_for('privmsg', 'load', function(msg) {
 		if(misaoUtil.check('load', msg)) {
@@ -157,6 +173,20 @@ var Misao = {
 					msg.say(reply);
 				});
 			}
+		}
+	},
+	
+	join: function(msg, callback) {
+		words = misaoUtil.stripText(msg).split(' ');
+		if(words[0].match(/^#\w+/)) {
+			dorkBot.join(words[0]);
+		}
+	},
+	
+	part: function(msg, callback) {
+		words = misaoUtil.stripText(msg).split(' ');
+		if(words[0].match(/^#\w+/)) {
+			dorkBot.part(words[0]);
 		}
 	},
 	
