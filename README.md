@@ -51,7 +51,7 @@ minutes, bot will reply back with message you assigned it with.
 
 ### 8-ball
 
-    Implemented: No
+    Implemented: Yes
     Usage: 8-ball question
 
 A very simple decision making module.
