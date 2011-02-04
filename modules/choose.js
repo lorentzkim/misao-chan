@@ -1,5 +1,4 @@
-var util = require('../util.js'),
-	misaoUtil = require('../util.js');;
+var misaoUtil = require('../util.js');
 
 module.id = 'choose';
 

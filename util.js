@@ -33,7 +33,7 @@ exports.getCommand = function(msg) {
 		command = words[0];
 	}
 	
-	return command.replace(/[^a-z]/, '');
+	return command.replace(/[^a-z\-0-9]/, '');
 }
 
 // Strip to msg text for use in methods
