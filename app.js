@@ -7,7 +7,7 @@ var sys = require('sys'),
 	util = require('util'),
 	misaoUtil = require('./util.js'),
 	config = require('./config.js'),
-	dork = require('dork');
+	jerk = require('jerk');
 
 require.paths.unshift(config.filesystem.modulesPath);
 
@@ -15,9 +15,9 @@ var options = config.irc;
 var illegalCommands = ['load', 'unload', 'list', 'exec', 'join', 'part'];
 
 // Listeners
-var dorkBot = dork(function(j) {
+var jerkBot = jerk(function(j) {
 
-	j.watch_for('privmsg', 'join', function(msg) {
+	j.watch_for('join', function(msg) {
 		if(misaoUtil.check('join', msg)) {
 			Misao.join(msg, function(reply) {
 				msg.say(reply);
@@ -25,7 +25,7 @@ var dorkBot = dork(function(j) {
 		}
 	});
 	
-	j.watch_for('privmsg', 'part', function(msg) {
+	j.watch_for('part', function(msg) {
 		if(misaoUtil.check('part', msg)) {
 			Misao.part(msg, function(reply) {
 				msg.say(reply);
@@ -33,7 +33,7 @@ var dorkBot = dork(function(j) {
 		}
 	});
 
-	j.watch_for('privmsg', 'load', function(msg) {
+	j.watch_for('load', function(msg) {
 		if(misaoUtil.check('load', msg)) {
 			Misao.load(msg, function(reply) {
 				msg.say(reply);
@@ -41,7 +41,7 @@ var dorkBot = dork(function(j) {
 		}
 	});
 	
-	j.watch_for('privmsg', 'unload', function(msg) {
+	j.watch_for('unload', function(msg) {
 		if(misaoUtil.check('unload', msg)) {
 			Misao.unload(msg, function(reply) {
 				msg.say(reply);
@@ -49,7 +49,7 @@ var dorkBot = dork(function(j) {
 		}
 	});
 	
-	j.watch_for('privmsg', 'list', function(msg) {
+	j.watch_for('list', function(msg) {
 		if(misaoUtil.check('list', msg)) {
 			Misao.list(msg, function(reply) {
 				msg.say(reply);
@@ -57,7 +57,7 @@ var dorkBot = dork(function(j) {
 		}
 	});
 	
-	j.watch_for('privmsg', /.*/, function(msg) {
+	j.watch_for(/.*/, function(msg) {
 		if(misaoUtil.isForMisao(msg)) {
 			Misao.execute(msg, function(reply) {
 				if(reply != undefined) {
@@ -68,7 +68,7 @@ var dorkBot = dork(function(j) {
 		Misao.listen(msg);
 	});
 	
-	j.watch_for('join', /.*/, function(msg) {
+	j.user_join(/.*/, function(msg) {
 		Misao.listen(msg);
 	});
 }).connect(options);
@@ -164,7 +164,7 @@ var Misao = {
 				module = Misao._loadedModules[m];
 				if(module.listen != undefined) {
 					Misao._loadedModules[m].listen(msg, function(to, reply) {
-						dorkBot.say(to, reply);
+						jerkBot.say(to, reply);
 					});
 				}
 			}
@@ -179,14 +179,14 @@ var Misao = {
 	join: function(msg, callback) {
 		words = misaoUtil.stripText(msg).split(' ');
 		if(words[0].match(/^#\w+/)) {
-			dorkBot.join(words[0]);
+			jerkBot.join(words[0]);
 		}
 	},
 	
 	part: function(msg, callback) {
 		words = misaoUtil.stripText(msg).split(' ');
 		if(words[0].match(/^#\w+/)) {
-			dorkBot.part(words[0]);
+			jerkBot.part(words[0]);
 		}
 	},
 	

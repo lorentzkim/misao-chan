@@ -6,7 +6,7 @@
 	"version" : "0.0.1",
 	"main" : "./misao-chan",
 	"dependencies" : {
-		"dork": ">=1.1.2",
+		"jerk": ">=1.1.12",
 		"mongoose": ">1.0.0"
 	},
 	"engines" : [
