@@ -6,8 +6,7 @@ free to use her for your own channel too!
 She is a relatively advanced IRC bot, capable of hotloading modules (even through
 code upgrades), and thus very expandable.
 
-For submitting issues and other things, please visit
-[redmine.majestika.net](http://redmine.majestika.net/projects/misao-chan/).
+Built on top of [Jerk](https://github.com/gf3/Jerk).
 
 ## Project Goal
 
@@ -18,7 +17,7 @@ telling us when the pizza is baked so we can eat to live another day.
 ## Core Requirements
 
     nodejs
-    dork
+    jerk
     
 ## Module Requirements
 
