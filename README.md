@@ -43,11 +43,15 @@ or "unload modulename" to load and unload modules, respectably.
 
 ### Pizza
 
-    Implemented: No
-    Usage: pizza 10m message
+    Implemented: Yes
+    Usage: pizza 10m "message goes here"
 
 Pizza is basically a timer. 10m is an example time, meaning 10 minutes. After 10
-minutes, bot will reply back with message you assigned it with.
+minutes, bot will reply back with message you assigned it with. Anything between
+the ""s will be parsed as the return message.
+
+This feature does not yet rely on the mongodb to store pizza values in-case the bot
+instance is closed.
 
 ### 8-ball
 
