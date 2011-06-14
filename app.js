@@ -65,11 +65,15 @@ var jerkBot = jerk(function(j) {
 				}
 			});
 		}
-		Misao.listen(msg);
+		Misao.listen('privmsg', msg);
 	});
 	
 	j.user_join(/.*/, function(msg) {
-		Misao.listen(msg);
+		Misao.listen('join', msg);
+	});
+	
+	j.user_leave(/.*/, function(msg) {
+		Misao.listen('leavel', msg);
 	});
 }).connect(options);
 
@@ -79,14 +83,19 @@ var Misao = {
 	_loadedModules: [],
 
 	load: function(msg, callback) {
-		// Actual module name here is the argument, not 'load' module
-		moduleName = misaoUtil.stripText(msg).replace(/[^a-z\-0-9]/, '');
-		
-		console.log(moduleName);
-		
-		Misao._loadModule(moduleName, function(reply) {
-			callback(misaoUtil.padName(msg, reply));
-		});
+		try {
+			// Actual module name here is the argument, not 'load' module
+			moduleName = misaoUtil.stripText(msg).replace(/[^a-z\-0-9]/, '');
+			
+			Misao._loadModule(moduleName, function(reply) {
+				callback(misaoUtil.padName(msg, reply));
+			});
+		}
+		catch (err) {
+			Misao.error(err, msg, function(reply) {
+				callback(reply);
+			});
+		}
 	},
 	
 	_loadModule: function(moduleName, callback) {
@@ -156,14 +165,15 @@ var Misao = {
 		}
 	},
 	
-	// Listen differs from execute that there's no callback, and doesn't rely
+	// Listens differs from execute that there's no callback, and doesn't rely
 	// on module names.
-	listen: function(msg) {
+	listen: function(type, msg) {
 		for(m in Misao._loadedModules) {
 			try {
+				method = 'listen_' + type;
 				module = Misao._loadedModules[m];
-				if(module.listen != undefined) {
-					Misao._loadedModules[m].listen(msg, function(to, reply) {
+				if(module.hasOwnProperty(method)) {
+					Misao._loadedModules[m][method](msg, function(to, reply) {
 						jerkBot.say(to, reply);
 					});
 				}

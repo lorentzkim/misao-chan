@@ -28,7 +28,7 @@ exports.execute = function(msg, callback) {
 	}
 };
 
-exports.listen = function(msg, callback) {
+exports.listen_join = function(msg, callback) {
 	Tell.find({to: msg.user}, function(err, docs) {
 		while(result = docs.pop()) {
 			callback(result.doc.to, result.doc.from+' told me to tell you "'+result.doc.message+'"~');
