@@ -22,6 +22,10 @@ exports.isAdmin = function(username) {
 
 // Specifically gets the command/module part of the msg
 exports.getCommand = function(msg) {
+	if(msg.text.length == 0) {
+		return null;
+	}
+
 	text = msg.text[0];
 	words = text.split(' ');
 	command = '';
@@ -33,6 +37,10 @@ exports.getCommand = function(msg) {
 		command = words[0];
 	}
 	
+	if (command == undefined) {
+		return false;
+	}
+
 	return command.replace(/[^a-z\-0-9]/, '');
 }
 
