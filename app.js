@@ -145,19 +145,12 @@ var Misao = {
 		
 		if(Misao._loadedModules[moduleName] != undefined) {
 			try {
-				try {
-					Misao._loadedModules[moduleName].execute(msg, function(reply) {
-						if(!misaoUtil.isPM(msg)) {
-							reply = misaoUtil.padName(msg, reply);
-						}
-						callback(reply);
-					});
-				}
-				catch(err) {
-					Misao._loadedModules[moduleName].action(msg, function(reply) {
-						callback(reply);
-					});
-				}
+				Misao._loadedModules[moduleName].execute(msg, function(reply) {
+					if(!misaoUtil.isPM(msg)) {
+						reply = misaoUtil.padName(msg, reply);
+					}
+					callback(reply);
+				});
 			}
 			catch(err) {
 				Misao.error(err, msg, function(reply) {
