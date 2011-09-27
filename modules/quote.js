@@ -30,3 +30,5 @@ exports.execute = function(msg, callback) {
 		});
 	}
 };
+
+exports.help = "Searches the quotes database based on given parameters. If no search terms are given, a random quote is selected. Usage: quote awesome";

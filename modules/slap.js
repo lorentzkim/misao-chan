@@ -1,4 +1,4 @@
-// Greatly inspired by PipSqueek's Slap module
+// Inspired by PipSqueek's Slap module
 // http://code.google.com/p/pipsqueek/source/browse/trunk/lib/PipSqueek/Plugin/Slap.pm
 
 var misaoUtil = require('../util.js');
@@ -18,3 +18,5 @@ var slaps = {
 	size: [ "large", "huge", "small", "tiny", "miniscule", "enormous", "gargantuan", "normal" ],
 	tool: [ "trout", "fork", "mouse", "bear", "piano", "cello", "vacuum", "mosquito", "sewing needle" ]
 };
+
+exports.help = "Slap something. Usage: slap something"

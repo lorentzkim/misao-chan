@@ -23,3 +23,5 @@ exports.execute = function(msg, callback) {
 		return;
 	});
 };
+
+exports.help = "Add a quote to the quotes database. Anything after the command is saved as a quote. Usage: quote <sub_pop> This bot is awesome.";

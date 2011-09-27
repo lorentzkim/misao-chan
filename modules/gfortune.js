@@ -13,3 +13,5 @@ exports.execute = function(msg, callback) {
 			callback(stdout.replace(/\n/, ' '));
 	});
 };
+
+exports.help = "Calls the system utility 'fortune' and returns the result. Searches all small fortunes (offensive ones included). Usage: gfortune"
