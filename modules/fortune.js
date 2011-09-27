@@ -10,6 +10,8 @@ exports.execute = function(msg, callback) {
 	callback(msgs.join(' | '));
 };
 
+exports.help = "Tells you your daily fortune, Japanese style. Very random.";
+
 var fortunes = {
 	luck: [
 		"Daikyou (Catastrophe)",

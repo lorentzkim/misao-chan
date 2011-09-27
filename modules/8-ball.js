@@ -26,3 +26,5 @@ var answers = [
 	'Outlook not so good',
 	'Very doubtful'
 ];
+
+exports.help = "Get an 8-ball style answer to a yes or no question. Usage: 8-ball Yes or no question?"

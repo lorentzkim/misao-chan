@@ -56,3 +56,5 @@ exports.execute = function(msg, callback) {
 	
 	callback(reply);
 };
+
+exports.help = "Pizza is basically a timer. 10m is an example time, meaning 10 minutes. After 10 minutes, bot will reply back with message you assigned it with. Anything between the \"\"s will be parsed as the return message. Usage: pizza 10m \"Your message\"";

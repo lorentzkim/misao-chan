@@ -36,3 +36,5 @@ exports.listen_join = function(msg, callback) {
 		}
 	});
 }
+
+exports.help = "With Tell, you can send another user a message through the bot, whether the person is online or not. The person will receive the message the moment the bot realises the person is online. Nickname is case sensitive. Usage: tell nickname message"

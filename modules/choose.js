@@ -15,3 +15,5 @@ exports.execute = function(msg, callback) {
 	
 	callback(reply);
 };
+
+exports.help = "Randomly select between two options. Usage: choose a or b"
