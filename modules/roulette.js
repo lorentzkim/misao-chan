@@ -5,21 +5,22 @@ module.id = 'roulette';
 chambers = [ 0, 0, 0, 0, 0, 0 ];
 
 function reload() {
+	chambers = [ 0, 0, 0, 0, 0, 0 ];
 	chambers[Math.floor(Math.random()*chambers.length)] = 1;
-	return '\001ACTION reloads.\001';
+	return 'reloads.';
 }
 
-exports.action = function(msg, callback) {
+exports.execute = function(msg, callback) {
 	text = misaoUtil.stripText(msg);
 	
 	var bullet = chambers.shift();
-	var output = "\001ACTION fires chamber " + (6 - chambers.length) + " of 6 @ " + msg.user + " => ";
+	var output = "chamber " + (6 - chambers.length) + " of 6 => ";
 	
 	if(bullet) {
-		callback(output + "*BANG*\001");
-		callback(reload());
+		callback(output + "*BANG*");
+		callback(reload(), true);
 	} else {
-		callback(output + "+click+\001");
+		callback(output + "+click+");
 	}
 };
 reload();
