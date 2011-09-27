@@ -145,9 +145,12 @@ var Misao = {
 		
 		if(Misao._loadedModules[moduleName] != undefined) {
 			try {
-				Misao._loadedModules[moduleName].execute(msg, function(reply) {
+				Misao._loadedModules[moduleName].execute(msg, function(reply, isAction) {
 					if(!misaoUtil.isPM(msg)) {
 						reply = misaoUtil.padName(msg, reply);
+					}
+					if(isAction) {
+						reply = misaoUtil.makeAction(msg, reply);;
 					}
 					callback(reply);
 				});

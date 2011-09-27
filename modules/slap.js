@@ -5,11 +5,11 @@ var misaoUtil = require('../util.js');
 
 module.id = 'slap';
 
-exports.action = function(msg, callback) {
+exports.execute = function(msg, callback) {
 	for (i in slaps) {
 		eval(i + ' = slaps.' + i + '[Math.floor(Math.random()*slaps.' + i + '.length)];');
 	}
-	callback('\001ACTION ' + verb + ' ' + misaoUtil.stripText(msg) + ' ' + area + ' with a ' + size + ' ' + tool + '.\001');
+	callback(verb + ' ' + misaoUtil.stripText(msg) + ' ' + area + ' with a ' + size + ' ' + tool, true);
 };
 
 var slaps = {

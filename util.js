@@ -61,6 +61,11 @@ exports.padName = function(msg, result) {
 	return msg.user+': '+result;
 }
 
+// Bookends codes to perform a /me action & strips user name
+exports.makeAction = function(msg, result) {
+	return '\001ACTION ' + result.replace(new RegExp('^' + msg.user + ':'), '') + '\001';
+}
+
 // If this message is coming in from PM
 exports.isPM = function(msg) {
 	if(msg.user == msg.source) return true;
