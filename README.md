@@ -24,6 +24,16 @@ telling us when the pizza is baked so we can eat to live another day.
 ### Tell
     mongodb
     mongoose
+
+### Weather
+	libxmljs
+
+### Quote
+	mongodb
+	mongoose
+
+### GFortune
+	fortune (system utility)
     
 ## Installation
 
