@@ -3,7 +3,7 @@ var misaoUtil = require('../util.js');
 module.id = 'help';
 
 exports.execute = function(msg, callback) {
-	text = misaoUtil.stripText(msg);
+	text = misaoUtil.getEverythingElse(msg);
 	if(text === "") {
 		callback('Say help module_name for help on specific modules.');
 		callback('Please visit "https://github.com/lorentzkim/misao-chan" for usage');

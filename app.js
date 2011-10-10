@@ -85,7 +85,7 @@ var Misao = {
 	load: function(msg, callback) {
 		try {
 			// Actual module name here is the argument, not 'load' module
-			moduleName = misaoUtil.stripText(msg).replace(/[^a-z\-0-9]/, '');
+			moduleName = misaoUtil.getEverythingElse(msg);
 			
 			Misao._loadModule(moduleName, function(reply) {
 				callback(misaoUtil.padName(msg, reply));
@@ -118,7 +118,7 @@ var Misao = {
 	},
 	
 	unload: function(msg, callback) {
-		moduleName = misaoUtil.stripText(msg).replace(/[^a-z\-0-9]/, '');
+		moduleName = misaoUtil.getEverythingElse(msg);
 		if(Misao._loadedModules[moduleName] != undefined) {
 			delete Misao._loadedModules[moduleName];
 			delete require.cache[modulePath];

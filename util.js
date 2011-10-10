@@ -22,41 +22,21 @@ exports.isAdmin = function(username) {
 
 // Specifically gets the command/module part of the msg
 exports.getCommand = function(msg) {
-	if(msg.text.length == 0) {
-		return null;
-	}
-
-	text = msg.text[0];
-	words = text.split(' ');
-	command = '';
-	
-	if(words[0].match(new RegExp("(^"+options.nick+",|^"+options.nick+":)"))) {
-		command = words[1];
-	}
-	else if(words[0].match(new RegExp("^"+options.commandPrefix+"\\w+"))) {
-		command = words[0].replace(options.commandPrefix,'');
-	}
-	else {
-		command = words[0];
-	}
-	
-	if (command == undefined) {
-		return false;
-	}
-
-	return command.replace(/[^a-z\-0-9]/, '');
+	return this.processMsg(msg).command;
+}
+// Gets the order, or null if there isn't an order
+exports.getOrder = function(msg) {
+	return this.processMsg(msg).order;
+}
+// Gets everything else
+exports.getEverythingElse = function(msg) {
+	return this.processMsg(msg).everythingElse;
 }
 
 // Strip to msg text for use in methods
+// DEPRECATED in favor of getEverythingElse
 exports.stripText = function(msg) {
-	text = msg.text[0];
-	if(this.isPM(msg)) {
-		regex = new RegExp("^\\w+($|\\s)");
-	}
-	else {
-		regex = new RegExp("^"+options.nick+": \\w+($|\\s)");
-	}
-	return text.replace(regex, '');
+	return this.getEverythingElse(msg);
 }
 
 // Adds a user name to the reply, for ease of use
@@ -77,8 +57,28 @@ exports.isPM = function(msg) {
 
 // If this message is really for the bot
 exports.isForMisao = function(msg) {
-	if(this.isPM(msg) || msg.text[0].match(new RegExp("(^"+options.nick+":|^"+options.nick+",)")) || msg.text[0].match(new RegExp("^"+options.commandPrefix+"\\w+"))) {
+	if(this.isPM(msg) || this.getOrder(msg)) {
 		return true;
 	}
 	return false;
+}
+
+// Processes the msg object into an object intended for use in all these check functions
+// Trying to consolidate some of the command detection logic
+exports.processMsg = function(msg) {
+	var text = msg.text[0];
+	var findOrder = new RegExp("(^"+options.nick+":|^"+options.nick+",|^"+options.commandPrefix+")");
+	
+	try {
+		var order = text.match(findOrder).pop();
+	}
+	catch(err) {
+		console.error(err);
+		return { "order": null };
+	}
+	
+	var command = text.replace(findOrder,'').match(/\w+/).pop();
+	var everythingElse = text.replace(order,'').replace(command,'').replace(/^\s*/, '');
+	
+	return { "order": order, "command": command, "everythingElse": everythingElse };
 }
