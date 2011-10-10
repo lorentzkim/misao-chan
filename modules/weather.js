@@ -5,10 +5,15 @@ var libxmljs = require('libxmljs');
 module.id = 'weather';
 
 exports.execute = function(msg, callback) {
+	if(misaoUtil.getEverythingElse(msg) == '') {
+		callback("No location provided.");
+		return;
+	}
+	
 	var resultsRawBody = '';
 	http.get({ host: 'www.google.com',
 			   port: 80,
-			   path: encodeURI('/ig/api?weather=' + misaoUtil.stripText(msg))
+			   path: encodeURI('/ig/api?weather=' + misaoUtil.getEverythingElse(msg))
 			 },
 			 function(response) {
 			 	response.on('data', function(chunk) {
