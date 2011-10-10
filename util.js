@@ -30,8 +30,11 @@ exports.getCommand = function(msg) {
 	words = text.split(' ');
 	command = '';
 	
-	if(words[0] == options.nick+':') {
+	if(words[0].match(new RegExp("(^"+options.nick+",|^"+options.nick+":)"))) {
 		command = words[1];
+	}
+	else if(words[0].match(new RegExp("^"+options.commandPrefix+"\\w+"))) {
+		command = words[0].replace(options.commandPrefix,'');
 	}
 	else {
 		command = words[0];
@@ -74,7 +77,7 @@ exports.isPM = function(msg) {
 
 // If this message is really for the bot
 exports.isForMisao = function(msg) {
-	if(this.isPM(msg) || msg.text[0].match(new RegExp("^"+options.nick+":"))) {
+	if(this.isPM(msg) || msg.text[0].match(new RegExp("(^"+options.nick+":|^"+options.nick+",)")) || msg.text[0].match(new RegExp("^"+options.commandPrefix+"\\w+"))) {
 		return true;
 	}
 	return false;

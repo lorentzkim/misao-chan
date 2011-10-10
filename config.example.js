@@ -7,7 +7,8 @@ exports.irc = {
 		username: 'Misao-chan',
 		realname: 'Misao-chan (BOT)',
 	},
-	channels: ['#misao-chan']
+	channels: ['#misao-chan'],
+	commandPrefix: '!'
 };
 
 exports.mongodb = 'mongodb://localhost/misao';
