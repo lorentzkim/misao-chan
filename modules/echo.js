@@ -1,6 +1,7 @@
 module.id = 'echo';
 
 exports.execute = function(msg, callback) {
+	console.log(msg);
 	callback(msg);
 };
 
