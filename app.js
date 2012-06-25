@@ -2,13 +2,10 @@
 
 // Load required files
 var util = require('util'),
-	path = require('path'),
 	fs = require('fs'),
 	misaoUtil = require('./util.js'),
 	config = require('./config.js'),
 	jerk = require('jerk');
-
-require.paths.unshift(config.filesystem.modulesPath);
 
 var options = config.irc;
 var illegalCommands = ['load', 'unload', 'list', 'exec', 'join', 'part'];
@@ -67,11 +64,11 @@ var jerkBot = jerk(function(j) {
 		Misao.listen('privmsg', msg);
 	});
 	
-	j.user_join(/.*/, function(msg) {
+	j.user_join(function(msg) {
 		Misao.listen('join', msg);
 	});
 	
-	j.user_leave(/.*/, function(msg) {
+	j.user_leave(function(msg) {
 		Misao.listen('leavel', msg);
 	});
 }).connect(options);
@@ -99,7 +96,8 @@ var Misao = {
 	
 	_loadModule: function(moduleName, callback) {
 		modulePath = config.filesystem.modulesPath+'/'+moduleName+'.js';
-		path.exists(modulePath, function(exists) {
+
+		fs.exists(modulePath, function(exists) {
 			if(!exists) {
 				callback('Module not found');
 			}
@@ -108,7 +106,7 @@ var Misao = {
 					callback('Module '+moduleName+' is already loaded~');
 				}
 				else {
-					var module = require(moduleName);
+					var module = require(modulePath);
 					Misao._loadedModules[moduleName] = module;
 					callback('Module '+moduleName+' has been loaded~');
 				}
