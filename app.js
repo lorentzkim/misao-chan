@@ -4,7 +4,6 @@
 var util = require('util'),
 	path = require('path'),
 	fs = require('fs'),
-	util = require('util'),
 	misaoUtil = require('./util.js'),
 	config = require('./config.js'),
 	jerk = require('jerk');
