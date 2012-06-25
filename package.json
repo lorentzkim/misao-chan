@@ -3,14 +3,14 @@
 	"description" : "Cutest IRC bot ever",
 	"author" : "Lorentz Kim <lorentz@majestika.net> (http://lorentz.majestika.net)",
 	"homepage" : "http://github.com/lorentzkim/misao-chan",
-	"version" : "0.0.1",
+	"version" : "0.0.2",
 	"main" : "./misao-chan",
 	"dependencies" : {
 		"jerk": ">=1.1.12",
 		"mongoose": ">1.0.0"
 	},
 	"engines" : [
-		"node >=0.2.0"
+		"node >=0.8.0"
 	],
 	"repository" : {
 		"type" : "git",
