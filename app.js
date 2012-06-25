@@ -1,7 +1,7 @@
 // Config
 
 // Load required files
-var sys = require('sys'),
+var util = require('util'),
 	path = require('path'),
 	fs = require('fs'),
 	util = require('util'),
